@@ -1,7 +1,7 @@
 {
-  "name": "elrastro-cliente",
+  "name": "cliente-cliente",
   "version": "1.0.0",
-  "description": "",
+  "description": "cliente-backend",
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./index.mjs",
