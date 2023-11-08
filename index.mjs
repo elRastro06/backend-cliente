@@ -14,7 +14,33 @@ app.listen(port, () => {
 
 app.get("/", async (req, res) => {
   try {
-    let results = await clientes.find({}).toArray();
+    let filtro = {};
+    let orden = {};
+
+    const queries = req.query;
+
+    if (queries.name) {
+      filtro = { ...filtro, name: queries.name };
+    }
+    if (queries.email) {
+      filtro = { ...filtro, email: queries.email };
+    }
+    if (queries.googleId) {
+      filtro = { ...filtro, googleId: queries.googleId };
+    }
+    if (queries.oauthToken) {
+      filtro = { ...filtro, oauthToken: queries.oauthToken };
+    }
+
+    if(queries.orderBy && queries.order) {
+      if (queries.order == "asc") {
+          orden = { ...orden, [queries.orderBy]: 1 };
+      } else if (queries.order == "desc") {
+          orden = { ...orden, [queries.orderBy]: -1 };
+      }
+  }
+
+    let results = await clientes.find(filtro).sort(orden).toArray();
     res.send(results).status(200);
   } catch (e) {
     res.send(e).status(500);
@@ -42,7 +68,9 @@ app.get("/:id", async (req, res) => {
 
 app.delete("/:id", async (req, res) => {
   try {
-    const result = await clientes.deleteOne({ _id: new ObjectId(req.params.id) });
+    const result = await clientes.deleteOne({
+      _id: new ObjectId(req.params.id),
+    });
     res.send(result).status(200);
   } catch (e) {
     res.send(e).status(500);
