@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import 'dotenv/config';
+import "dotenv/config";
 
 const connectionString = process.env.CONNECTION_STRING;
 const client = new MongoClient(connectionString);
@@ -9,6 +9,6 @@ try {
 } catch (e) {
   console.error(e);
 }
-let db = conn.db("sample_training");
-let clientes = db.collection("clientes");
+let db = conn.db("web");
+let clientes = db.collection("clients");
 export default clientes;
