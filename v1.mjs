@@ -18,7 +18,7 @@ app.get("/", async (req, res) => {
       filtro = { ...filtro, email: queries.email };
     }
     if (queries.googleId) {
-      filtro = { ...filtro, googleId: queries.googleId };
+      filtro = { ...filtro, googleID: queries.googleID };
     }
     if (queries.oauthToken) {
       filtro = { ...filtro, oauthToken: queries.oauthToken };
