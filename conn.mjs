@@ -11,4 +11,5 @@ try {
 }
 let db = conn.db("web");
 let clientes = db.collection("clients");
+clientes.createIndex({ location: "2dsphere" });
 export default clientes;

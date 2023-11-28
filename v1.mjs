@@ -24,6 +24,20 @@ app.get("/", async (req, res) => {
       filtro = { ...filtro, oauthToken: queries.oauthToken };
     }
 
+    if (queries.long && queries.lat && queries.radius) {
+      filtro = {
+        ...filtro,
+        location: {
+          $geoWithin: {
+            $centerSphere: [
+              [parseFloat(queries.long), parseFloat(queries.lat)],
+              queries.radius / 6371,
+            ],
+          },
+        },
+      };
+    }
+
     if (queries.orderBy && queries.order) {
       if (queries.order == "asc") {
         orden = { ...orden, [queries.orderBy]: 1 };
@@ -35,6 +49,7 @@ app.get("/", async (req, res) => {
     let results = await clientes.find(filtro).sort(orden).toArray();
     res.send(results).status(200);
   } catch (e) {
+    console.log(e);
     res.send(e).status(500);
   }
 });
@@ -42,9 +57,18 @@ app.get("/", async (req, res) => {
 app.post("/", async (req, res) => {
   try {
     const cliente = req.body;
+    // insert the location as a GeoJSON object
+    cliente.location = {
+      type: "Point",
+      coordinates: [parseFloat(req.body.long), parseFloat(req.body.lat)],
+    };
+    // delete the long and lat fields
+    delete cliente.long;
+    delete cliente.lat;
     const result = await clientes.insertOne(cliente);
     res.send(result).status(200);
   } catch (e) {
+    console.log(e);
     res.send(e).status(500);
   }
 });
@@ -80,9 +104,19 @@ app.delete("/", async (req, res) => {
 
 app.put("/:id", async (req, res) => {
   try {
+    const cliente = req.body;
+    // insert the location as a GeoJSON object
+    cliente.location = {
+      type: "Point",
+      coordinates: [parseFloat(req.body.long), parseFloat(req.body.lat)],
+    };
+    // delete the long and lat fields
+    delete cliente.long;
+    delete cliente.lat;
+
     const result = await clientes.updateOne(
       { _id: new ObjectId(req.params.id) },
-      { $set: req.body }
+      { $set: cliente }
     );
     res.send(result).status(200);
   } catch (e) {
