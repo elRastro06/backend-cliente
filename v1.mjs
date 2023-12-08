@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import clientes from "./conn.mjs";
 import express from "express";
+import axios from "axios";
 
 const app = express.Router();
 
@@ -47,7 +48,7 @@ app.get("/", async (req, res) => {
     }
 
     if (queries.product) {
-      const result_product_api = await fetch(
+      const result_product_api = await axios.get(
         `http://localhost:5001/v1/?name=${queries.product}`
       );
 
