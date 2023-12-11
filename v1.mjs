@@ -2,8 +2,11 @@ import { ObjectId } from "mongodb";
 import clientes from "./conn.mjs";
 import express from "express";
 import axios from "axios";
+import "dotenv/config";
 
 const app = express.Router();
+
+const products = process.env.PRODUCTS != undefined ? process.env.PRODUCTS : "localhost";
 
 app.get("/", async (req, res) => {
   try {
@@ -49,7 +52,7 @@ app.get("/", async (req, res) => {
 
     if (queries.product) {
       const result_product_api = await axios.get(
-        `http://localhost:5001/v1/?name=${queries.product}`
+        `http://${products}:5001/v1/?name=${queries.product}`
       );
 
       const result_product = await result_product_api.json();
