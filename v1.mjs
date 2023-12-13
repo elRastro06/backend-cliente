@@ -7,28 +7,8 @@ import "dotenv/config";
 const app = express.Router();
 
 const products = process.env.PRODUCTS != undefined ? process.env.PRODUCTS : "localhost";
-const clients = process.env.PRODUCTS != undefined ? process.env.CLIENTS : "localhost";
 
-const verifyToken = async (req, res, next) => {
-    try {
-        const response = await axios.get(`http://${clients}:5000/checkToken/${req.headers.authorization}`);
-        const user = response.data.user;
-
-        if (req.method == 'PUT' && req.method == 'DELETE' && req.params.id != user._id) {
-            res.status(402).send("Unauthorized action");
-            return;
-        } else if (req.method == 'DELETE' && req.params.id == undefined) {
-            res.status(402).send("Unauthorized action");
-            return;
-        }
-
-        next();
-    } catch {
-        res.status(401).send({ error: "Invalid token" });
-    }
-}
-
-app.get("/", verifyToken, async (req, res) => {
+app.get("/", async (req, res) => {
     try {
         let filtro = {};
         let orden = {};
@@ -72,7 +52,11 @@ app.get("/", verifyToken, async (req, res) => {
 
         if (queries.product) {
             const result_product_api = await axios.get(
-                `http://${products}:5001/v1/?name=${queries.product}`
+                `http://${products}:5001/v1/?name=${queries.product}`, {
+                    headers: {
+                        "Authorization": req.headers.authorization
+                    }
+                }
             );
 
             const result_product = await result_product_api.json();
@@ -109,7 +93,7 @@ app.post("/", async (req, res) => {
     }
 });
 
-app.get("/:id", verifyToken, async (req, res) => {
+app.get("/:id", async (req, res) => {
     try {
         const result = await clientes.findOne({ _id: new ObjectId(req.params.id) });
         res.send(result).status(200);
@@ -118,7 +102,7 @@ app.get("/:id", verifyToken, async (req, res) => {
     }
 });
 
-app.delete("/:id", verifyToken, async (req, res) => {
+app.delete("/:id", async (req, res) => {
     try {
         const result = await clientes.deleteOne({
             _id: new ObjectId(req.params.id),
@@ -129,7 +113,7 @@ app.delete("/:id", verifyToken, async (req, res) => {
     }
 });
 
-app.delete("/", verifyToken, async (req, res) => {
+app.delete("/", async (req, res) => {
     try {
         let result = await clientes.deleteMany(req.body);
         res.send(result).status(200);
@@ -138,7 +122,7 @@ app.delete("/", verifyToken, async (req, res) => {
     }
 });
 
-app.put("/:id", verifyToken, async (req, res) => {
+app.put("/:id", async (req, res) => {
     try {
         const cliente = req.body;
 
