@@ -1,8 +1,8 @@
 import axios from "axios";
-const urlReviews = "http://localhost:5008/v2"
+const urlReviews = process.env.REVIEWS_URL;
 
 
 export const getReviewsByReviewedID = async (id) => {
-  const response = await axios.get(`${urlReviews}/?reviewedID=${id}`);
+  const response = await axios.get(`${urlReviews}/v2/?reviewedID=${id}`);
   return response.data;
 };

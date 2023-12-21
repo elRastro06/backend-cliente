@@ -6,7 +6,7 @@ import "dotenv/config";
 
 const app = express.Router();
 
-const products = process.env.PRODUCTS != undefined ? process.env.PRODUCTS : "localhost";
+const products = process.env.PRODUCTS_URL;
 
 app.get("/", async (req, res) => {
     try {
@@ -51,7 +51,7 @@ app.get("/", async (req, res) => {
         }
 
         if (queries.product) {
-            const result_product_api = await axios.get(`http://${products}:5001/v1/?name=${queries.product}`);
+            const result_product_api = await axios.get(`${products}/v1/?name=${queries.product}`);
 
             const result_product = await result_product_api.json();
             const users_id = result_product.map(

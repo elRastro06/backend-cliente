@@ -15,14 +15,13 @@ app.listen(port, () => {
   console.log(`Now listening on port ${port}`);
 });
 
-const clients =
-  process.env.CLIENTS != undefined ? process.env.CLIENTS : "localhost";
+const clients = process.env.CLIENTS_URL;
 
 const verifyToken = async (req, res, next) => {
   try {
     if (req.method != "GET" && req.headers.authorization != process.env.GOOGLE_CLIENT_ID) {
       const response = await axios.get(
-        `http://${clients}:5000/checkToken/${req.headers.authorization}`
+        `${clients}/checkToken/${req.headers.authorization}`
       );
       const user = response.data.user;
 
@@ -46,7 +45,7 @@ const verifyToken = async (req, res, next) => {
 
 app.get("/checkToken/:token", async (req, res) => {
   const token = req.params.token;
-  const response = await axios.get(`http://${clients}:5000/v1/?oauthToken=${token}`);
+  const response = await axios.get(`${clients}/v1/?oauthToken=${token}`);
   const user = response.data[0];
 
   if (user == undefined) {
