@@ -51,13 +51,7 @@ app.get("/", async (req, res) => {
         }
 
         if (queries.product) {
-            const result_product_api = await axios.get(
-                `http://${products}:5001/v1/?name=${queries.product}`, {
-                    headers: {
-                        "Authorization": req.headers.authorization
-                    }
-                }
-            );
+            const result_product_api = await axios.get(`http://${products}:5001/v1/?name=${queries.product}`);
 
             const result_product = await result_product_api.json();
             const users_id = result_product.map(

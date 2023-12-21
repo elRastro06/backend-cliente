@@ -20,7 +20,7 @@ const clients =
 
 const verifyToken = async (req, res, next) => {
   try {
-    if (req.headers.authorization != process.env.GOOGLE_CLIENT_ID) {
+    if (req.method != "GET" && req.headers.authorization != process.env.GOOGLE_CLIENT_ID) {
       const response = await axios.get(
         `http://${clients}:5000/checkToken/${req.headers.authorization}`
       );
@@ -37,7 +37,7 @@ const verifyToken = async (req, res, next) => {
         return;
       }
     }
-
+    
     next();
   } catch {
     res.status(401).send({ error: "Invalid token" });
@@ -46,14 +46,7 @@ const verifyToken = async (req, res, next) => {
 
 app.get("/checkToken/:token", async (req, res) => {
   const token = req.params.token;
-  const response = await axios.get(
-    `http://${clients}:5000/v1/?oauthToken=${token}`,
-    {
-      headers: {
-        Authorization: process.env.GOOGLE_CLIENT_ID,
-      },
-    }
-  );
+  const response = await axios.get(`http://${clients}:5000/v1/?oauthToken=${token}`);
   const user = response.data[0];
 
   if (user == undefined) {
