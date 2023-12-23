@@ -25,7 +25,7 @@ app.get("/:id/reviewsavg", async (req, res) => {
     
     reviewAvg = reviewAvg / reviews.length;
 
-    res.send( {reviewAvg: reviewAvg } ).status(200);
+    res.send( {reviewAvg: parseFloat(reviewAvg.toFixed(2)) } ).status(200);
   } catch (e) {
     res.send(e).status(500);
   }
